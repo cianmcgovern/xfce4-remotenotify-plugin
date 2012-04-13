@@ -18,8 +18,8 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
-#ifndef _SSH
-#define _SSH
+#ifndef REMOTE_NOTIFY_SSH_H_
+#define REMOTE_NOTIFY_SSH_H_
 
 #include "remote.h"
 

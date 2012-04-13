@@ -28,17 +28,73 @@
 #include <libxfce4util/libxfce4util.h>
 #include <libxfce4panel/xfce-panel-plugin.h>
 #include <libxfce4panel/xfce-hvbox.h>
+#include <stdbool.h>
 
 #include "xfce4-remotenotify-plugin.h"
+#include "driver.h"
+#include "configure.h"
+
+XfceRc *rc;
+int hostcount = 0;
 
 static void remotenotify_construct(XfcePanelPlugin *plugin);
 
 XFCE_PANEL_PLUGIN_REGISTER_EXTERNAL(remotenotify_construct);
 
+void free_struct(gpointer data)
+{
+    struct hostdetails *currenthost;
+    currenthost = (struct hostdetails*) data;
+
+    free(currenthost->hostname);
+    free(currenthost->username);
+    free(currenthost->password);
+    free(currenthost);
+}
+
+void free_data()
+{
+    g_list_free_full(list, free_struct);
+}
+
+void save_group(gpointer data, gpointer user_data)
+{
+    struct hostdetails *currenthost;
+    currenthost = (struct hostdetails*) data;
+
+    char *group, *threshload, *threshmem, *threshcpu;
+
+    asprintf(&threshload, "%f", currenthost->threshload);
+    asprintf(&threshmem, "%f", currenthost->threshmem);
+    asprintf(&threshcpu, "%f", currenthost->threshcpu);
+    asprintf(&group, "Host%i", hostcount);
+
+    xfce_rc_set_group(rc,group);
+    xfce_rc_write_entry(rc, "hostname", currenthost->hostname);
+    xfce_rc_write_int_entry(rc, "port", currenthost->port);
+    xfce_rc_write_bool_entry(rc, "load", currenthost->load);
+    xfce_rc_write_bool_entry(rc, "memory", currenthost->memory);
+    xfce_rc_write_bool_entry(rc, "cpu", currenthost->cpu);
+    xfce_rc_write_entry(rc, "username", currenthost->username);
+    xfce_rc_write_entry(rc, "password", currenthost->password);
+    xfce_rc_write_entry(rc, "threshload", threshload);
+    xfce_rc_write_entry(rc, "threshmem", threshmem);
+    xfce_rc_write_entry(rc, "threshcpu", threshcpu);
+    xfce_rc_write_int_entry(rc, "interval", currenthost->interval);
+
+    free(threshload);
+    free(threshmem);
+    free(threshcpu);
+    free(group);
+
+    hostcount++;
+}
+
 void remotenotify_save (XfcePanelPlugin *plugin, RemoteNotifyPlugin *remotenotify)
 {
-    XfceRc *rc;
     gchar  *file;
+    
+    hostcount = 0;
 
     /* get the config file location */
     file = xfce_panel_plugin_save_location (plugin, TRUE);
@@ -55,11 +111,16 @@ void remotenotify_save (XfcePanelPlugin *plugin, RemoteNotifyPlugin *remotenotif
 
     if (G_LIKELY (rc != NULL))
     {   
-      /* save the settings */
+        /* save the settings */
         DBG(".");
-        if (remotenotify->setting1)
-            xfce_rc_write_entry(rc, "setting1", remotenotify->setting1);
         
+        g_list_foreach(list, save_group, NULL);
+
+        xfce_rc_set_group(rc, "General");
+        xfce_rc_write_int_entry(rc, "hosts", hostcount);
+        xfce_rc_write_bool_entry(rc, "displaynotifcations", remotenotify->displaynotifications);
+        xfce_rc_write_bool_entry(rc, "playsounds", remotenotify->playsounds);
+
         /* close the rc file */
         xfce_rc_close (rc);
     }   
@@ -85,8 +146,35 @@ static void remotenotify_read (RemoteNotifyPlugin *remotenotify)
         if (G_LIKELY (rc != NULL))
         {
             /* read the settings */
-            value = xfce_rc_read_entry (rc, "setting1", 0);
-            remotenotify->setting1 = g_strdup (value);
+            xfce_rc_set_group(rc, "General");
+            hostcount = xfce_rc_read_int_entry(rc, "hosts", 0);
+
+            int i;
+            for(i = 1; i <= hostcount; i++) {
+
+                char *group;
+                asprintf(&group, "Host%i", i);
+
+                struct hostdetails *loadhost;
+                loadhost = (struct hostdetails *) malloc(sizeof(struct hostdetails));
+
+                xfce_rc_set_group(rc, group);
+                asprintf(&(loadhost->hostname), "%s", xfce_rc_read_entry(rc, "hostname", NULL));
+                loadhost->port = xfce_rc_read_int_entry(rc, "port", 0);
+                loadhost->load = xfce_rc_read_bool_entry(rc, "load", false);
+                loadhost->memory = xfce_rc_read_bool_entry(rc, "memory", false);
+                loadhost->cpu = xfce_rc_read_bool_entry(rc, "cpu", false);
+                asprintf(&(loadhost->username), "%s", xfce_rc_read_entry(rc, "username", NULL));
+                asprintf(&(loadhost->password), "%s", xfce_rc_read_entry(rc, "password", NULL));
+                loadhost->threshload = atof(xfce_rc_read_entry(rc, "threshload", 0));
+                loadhost->threshmem = atof(xfce_rc_read_entry(rc, "threshmem", 0));
+                loadhost->threshcpu = atof(xfce_rc_read_entry(rc, "threshcpu", 0));
+                loadhost->interval = xfce_rc_read_int_entry(rc, "interval", 0);
+
+                list = g_list_prepend(list, loadhost);
+
+                free(group);
+            }
 
             /* cleanup */
             xfce_rc_close (rc);
@@ -95,13 +183,9 @@ static void remotenotify_read (RemoteNotifyPlugin *remotenotify)
             return;
         }
     }
-
-    /* something went wrong, apply default values */
-    //DBG ("Applying default settings");
-
-    //sample->setting1 = g_strdup (DEFAULT_SETTING1);
-    //sample->setting2 = DEFAULT_SETTING2;
-    //sample->setting3 = DEFAULT_SETTING3;
+    else {
+        g_free(file);
+    }
 }
 
 static RemoteNotifyPlugin *remotenotify_new (XfcePanelPlugin *plugin)
@@ -131,7 +215,7 @@ static RemoteNotifyPlugin *remotenotify_new (XfcePanelPlugin *plugin)
     gtk_container_add (GTK_CONTAINER (remotenotify->ebox), remotenotify->hvbox);
 
     /* some sample widgets */
-    label = gtk_label_new (_("RemoteNotify"));
+    label = gtk_label_new (_("Remote Notify"));
     gtk_widget_show (label);
     gtk_box_pack_start (GTK_BOX (remotenotify->hvbox), label, FALSE, FALSE, 0);
 
@@ -155,8 +239,7 @@ static void remotenotify_free (XfcePanelPlugin *plugin, RemoteNotifyPlugin *remo
     gtk_widget_destroy (remotenotify->hvbox);
 
     /* cleanup the settings */
-    if (G_LIKELY (remotenotify->setting1 != NULL))
-        g_free (remotenotify->setting1);
+    free_data();
 
     /* free the plugin structure */
     panel_slice_free (RemoteNotifyPlugin, remotenotify);
@@ -189,6 +272,9 @@ static void remotenotify_construct (XfcePanelPlugin *plugin)
 {
     RemoteNotifyPlugin *remotenotify;
 
+    /* Intialise number of hosts */
+    numberhosts = 0;
+
     /* setup transation domain */
     xfce_textdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
 
@@ -211,8 +297,8 @@ static void remotenotify_construct (XfcePanelPlugin *plugin)
     g_signal_connect (G_OBJECT (plugin), "orientation-changed", G_CALLBACK (remotenotify_orientation_changed), remotenotify);
 
     /* show the configure menu item and connect signal */
-    //xfce_panel_plugin_menu_show_configure (plugin);
-    //g_signal_connect (G_OBJECT (plugin), "configure-plugin", G_CALLBACK (remotenotify_configure), remotenotify);
+    xfce_panel_plugin_menu_show_configure (plugin);
+    g_signal_connect (G_OBJECT (plugin), "configure-plugin", G_CALLBACK (remotenotify_configure), remotenotify);
 
     /* show the about menu item and connect signal */
     //xfce_panel_plugin_menu_show_about (plugin);

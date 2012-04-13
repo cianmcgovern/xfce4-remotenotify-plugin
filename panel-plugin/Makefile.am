@@ -2,6 +2,7 @@ INCLUDES = \
 	-I$(top_srcdir) \
 	-DG_LOG_DOMAIN=\"xfce4-remotenotify-plugin\" \
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
+	-DSRC_DIR=\"$(abs_builddir)\" \
 	$(PLATFORM_CPPFLAGS)
 
 #
@@ -11,22 +12,45 @@ plugin_PROGRAMS = \
 	xfce4-remotenotify-plugin
 
 plugindir = \
-	$(libexecdir)/xfce4/panel-plugins
+	/usr/lib/xfce4/panel-plugins
 
 xfce4_remotenotify_plugin_SOURCES = \
 	xfce4-remotenotify-plugin.c \
-	xfce4-remotenotify-plugin.h
+	xfce4-remotenotify-plugin.h \
+	ssh.c \
+	ssh.h \
+	parse.c \
+	parse.h \
+	remote.h \
+	driver.h \
+	driver.c \
+	addhost.c \
+	addhost.h \
+	displayhosts.c \
+	displayhosts.h \
+	deletehost.h \
+	deletehost.c \
+	configure.c \
+	configure.h
 
 xfce4_remotenotify_plugin_CFLAGS = \
 	$(LIBXFCE4UTIL_CFLAGS) \
 	$(LIBXFCE4UI_CFLAGS) \
 	$(LIBXFCE4PANEL_CFLAGS) \
+	$(LIBPCRE_CFLAGS) \
+	$(LIBSSH2_CFLAGS) \
+	$(LIBGCRYPT_CFLAGS) \
+	$(LIBGNUTLS_CFLAGS) \
 	$(PLATFORM_CFLAGS)
 
 xfce4_remotenotify_plugin_LDADD = \
 	$(LIBXFCE4UTIL_LIBS) \
 	$(LIBXFCE4UI_LIBS) \
-	$(LIBXFCE4PANEL_LIBS)
+	$(LIBXFCE4PANEL_LIBS) \
+	$(LIBSSH2_LIBS) \
+	$(LIBGCRYPT_LIBS) \
+	$(LIBGNUTLS_LIBS) \
+	$(LIBPCRE_LIBS)
 
 #
 # Desktop file

@@ -18,8 +18,8 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
-#ifndef _PARSE
-#define _PARSE
+#ifndef REMOTE_NOTIFY_PARSE_H_
+#define REMOTE_NOTIFY_PARSE_H_
 
 /* 
  *

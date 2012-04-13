@@ -1,5 +1,5 @@
 /*
- * global.h
+ * driver.h
  *
  * Copyright (C) 2012 Cian Mc Govern <cian@cianmcgovern.com>
  *
@@ -18,11 +18,29 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
-#ifndef _GLOBAL
-#define _GLOBAL
+#ifndef REMOTE_NOTIFY_DRIVER_H_
+#define REMOTE_NOTIFY_DRIVER_H_
 
-#include <pthread.h>
+#include <stdbool.h>
+#include <glib.h>
 
-pthread_mutex_t sshinit_lock = PTHREAD_MUTEX_INITIALIZER;
+extern GList *list;
+
+extern  pthread_mutex_t sshinit_lock;
+
+struct hostdetails
+{
+    char *hostname;
+    int port;
+    bool load;
+    bool memory;
+    bool cpu;
+    char *username;
+    char *password;
+    float threshload;
+    float threshmem;
+    float threshcpu;
+    int interval;
+};
 
 #endif

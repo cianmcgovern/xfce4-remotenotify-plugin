@@ -36,7 +36,7 @@
 
 #include "remote.h"
 #include "ssh.h"
-#include "global.h"
+#include "driver.h"
 
 /* libgcrypt MACRO to initialise gcrypts pthread functionality */
 GCRY_THREAD_OPTION_PTHREAD_IMPL;
@@ -99,7 +99,8 @@ int execute_command(struct remote *rm)
     /* results stores the output from the commands after they're executed
      * Each command  has a corresponding result so the results array is set to the same length as the commands array  */
     rm->results = malloc(rm->num_commands * sizeof(char*));
-    for(int i = 0; i < rm->num_commands; i++)
+    int i;
+    for(i = 0; i < rm->num_commands; i++)
         rm->results[i] = malloc(2048 * sizeof(char));
 
     /* Initialise libssh2 and check to see if it was initialized properly
@@ -206,7 +207,7 @@ int execute_command(struct remote *rm)
     }
     
     /* Open a session for each command */
-    for(int i = 0; i < rm->num_commands; i++) {
+    for(i = 0; i < rm->num_commands; i++) {
 
         /* Open a channel on the current channel and check for success */
         while( (channel = libssh2_channel_open_session(session)) == NULL && libssh2_session_last_error(session,NULL,NULL,0) == LIBSSH2_ERROR_EAGAIN) {

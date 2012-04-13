@@ -18,8 +18,8 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
-#ifndef REMOTE_DEF
-#define REMOTE_DEF
+#ifndef REMOTE_NOTIFY_REMOTE_H_
+#define REMOTE_NOTIFY_REMOTE_H_
 
 /*  Data structure for each remote host  */
 struct remote {
@@ -33,6 +33,7 @@ struct remote {
     char **commands;
     int num_commands;
     char **results;
+    int interval;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * xfce4-remotenotify-plugin.h
+ * displayhosts.h
  *
  * Copyright (C) 2012 Cian Mc Govern <cian@cianmcgovern.com>
  *
@@ -18,29 +18,9 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
-#ifndef REMOTE_NOTIFY_H_
-#define REMOTE_NOTIFY_H_
+#ifndef REMOTE_NOTIFY_DISPLAY_HOSTS_H_
+#define REMOTE_NOTIFY_DISPLAY_HOSTS_H_
 
-#include "driver.h"
-
-G_BEGIN_DECLS
-
-typedef struct
-{
-    XfcePanelPlugin *plugin;
-
-    GtkWidget *ebox;
-    GtkWidget *hvbox;
-    GtkWidget *label;
-
-    bool displaynotifications;
-    bool playsounds;
-} RemoteNotifyPlugin;
-
-int numberhosts;
-
-void remotenotify_save (XfcePanelPlugin *plugin, RemoteNotifyPlugin *remotenotify);
-
-G_END_DECLS
+void display_current_hosts(GtkWidget *widget, gpointer user_data);
 
 #endif
