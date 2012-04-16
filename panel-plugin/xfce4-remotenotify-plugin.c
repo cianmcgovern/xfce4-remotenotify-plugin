@@ -150,7 +150,7 @@ static void remotenotify_read (RemoteNotifyPlugin *remotenotify)
             hostcount = xfce_rc_read_int_entry(rc, "hosts", 0);
 
             int i;
-            for(i = 1; i <= hostcount; i++) {
+            for(i = 0; i < hostcount; i++) {
 
                 char *group;
                 asprintf(&group, "Host%i", i);
@@ -166,9 +166,9 @@ static void remotenotify_read (RemoteNotifyPlugin *remotenotify)
                 loadhost->cpu = xfce_rc_read_bool_entry(rc, "cpu", false);
                 asprintf(&(loadhost->username), "%s", xfce_rc_read_entry(rc, "username", NULL));
                 asprintf(&(loadhost->password), "%s", xfce_rc_read_entry(rc, "password", NULL));
-                loadhost->threshload = atof(xfce_rc_read_entry(rc, "threshload", 0));
-                loadhost->threshmem = atof(xfce_rc_read_entry(rc, "threshmem", 0));
-                loadhost->threshcpu = atof(xfce_rc_read_entry(rc, "threshcpu", 0));
+                loadhost->threshload = strtof(xfce_rc_read_entry(rc,"threshload", "0.0"),0);
+                loadhost->threshmem = strtof(xfce_rc_read_entry(rc, "threshmem", "0.0"),0);
+                loadhost->threshcpu = strtof(xfce_rc_read_entry(rc, "threshcpu", "0.0"),0);
                 loadhost->interval = xfce_rc_read_int_entry(rc, "interval", 0);
 
                 list = g_list_prepend(list, loadhost);
