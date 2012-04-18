@@ -79,6 +79,7 @@ XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.8.0])
 XDT_CHECK_PACKAGE([LIBXFCE4PANEL], [libxfce4panel-1.0], [4.8.0])
 XDT_CHECK_PACKAGE([LIBPCRE], [libpcre], [8.30])
 XDT_CHECK_PACKAGE([LIBSSH2], [libssh2], [1.4.1])
+XDT_CHECK_PACKAGE([LIBNOTIFY], [libnotify], [0.2.2])
 
 dnl ***********************************
 dnl *** Check for debugging support ***

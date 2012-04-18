@@ -54,7 +54,6 @@ void add_item(gpointer data, gpointer user_data)
                                             2, threshload,
                                             3, threshmem,
                                             4, threshcpu,
-                                            5, currenthost->interval,
                                             -1);
     free(threshload);
     free(threshmem);
@@ -93,9 +92,6 @@ void display_current_hosts(GtkWidget *widget, gpointer user_data)
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), treeviewcolumn);
 
     treeviewcolumn = gtk_tree_view_column_new_with_attributes("CPU Usage Monitoring", cellrenderertext, "text", 4, NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), treeviewcolumn);
-
-    treeviewcolumn = gtk_tree_view_column_new_with_attributes("Interval", cellrenderertext, "text", 5, NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), treeviewcolumn);
 
     gtk_widget_show_all(window); 

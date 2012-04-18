@@ -41,7 +41,6 @@ struct host {
     GtkEntry *threshload;
     GtkEntry *threshmem;
     GtkEntry *threshcpu;
-    GtkEntry *interval;
 };
 
 struct host currenthost;
@@ -70,7 +69,6 @@ void on_host_added(GtkWidget *widget, gpointer hostdetails)
     newhost->threshload = atof(gtk_entry_get_text(GTK_ENTRY(currenthost.threshload)));
     newhost->threshmem = atof(gtk_entry_get_text(GTK_ENTRY(currenthost.threshmem)));
     newhost->threshcpu = atof(gtk_entry_get_text(GTK_ENTRY(currenthost.threshcpu)));
-    newhost->interval = atoi(gtk_entry_get_text(GTK_ENTRY(currenthost.interval)));
 
     list = g_list_append(list, newhost);
     gtk_widget_destroy(currenthost.dialog);
@@ -113,7 +111,6 @@ void on_hosts_config(GtkButton *button, gpointer user_data)
     currenthost.threshload = GTK_ENTRY( gtk_builder_get_object( builder, "threshload" ) );
     currenthost.threshmem = GTK_ENTRY( gtk_builder_get_object( builder, "threshmem" ) );
     currenthost.threshcpu = GTK_ENTRY( gtk_builder_get_object( builder, "threshcpu" ) );
-    currenthost.interval = GTK_ENTRY( gtk_builder_get_object( builder, "interval" ) );
 
     add = GTK_ENTRY( gtk_builder_get_object ( builder, "add" ) );
     cancel = GTK_ENTRY( gtk_builder_get_object ( builder, "cancel" ) );

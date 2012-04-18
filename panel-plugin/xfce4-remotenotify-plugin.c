@@ -82,7 +82,6 @@ void save_group(gpointer data, gpointer user_data)
     xfce_rc_write_entry(rc, "threshload", threshload);
     xfce_rc_write_entry(rc, "threshmem", threshmem);
     xfce_rc_write_entry(rc, "threshcpu", threshcpu);
-    xfce_rc_write_int_entry(rc, "interval", currenthost->interval);
 
     free(threshload);
     free(threshmem);
@@ -122,6 +121,7 @@ void remotenotify_save (XfcePanelPlugin *plugin, RemoteNotifyPlugin *remotenotif
         xfce_rc_write_int_entry(rc, "hosts", hostcount);
         xfce_rc_write_bool_entry(rc, "displaynotifcations", remotenotify->displaynotifications);
         xfce_rc_write_bool_entry(rc, "playsounds", remotenotify->playsounds);
+        xfce_rc_write_int_entry(rc, "interval", interval);
 
         /* close the rc file */
         xfce_rc_close (rc);
@@ -150,6 +150,7 @@ static void remotenotify_read (RemoteNotifyPlugin *remotenotify)
             /* read the settings */
             xfce_rc_set_group(rc, "General");
             hostcount = xfce_rc_read_int_entry(rc, "hosts", 0);
+            update_interval(xfce_rc_read_int_entry(rc, "interval", 0));
 
             int i;
             for(i = 0; i < hostcount; i++) {
@@ -171,7 +172,6 @@ static void remotenotify_read (RemoteNotifyPlugin *remotenotify)
                 loadhost->threshload = strtof(xfce_rc_read_entry(rc,"threshload", "0.0"),0);
                 loadhost->threshmem = strtof(xfce_rc_read_entry(rc, "threshmem", "0.0"),0);
                 loadhost->threshcpu = strtof(xfce_rc_read_entry(rc, "threshcpu", "0.0"),0);
-                loadhost->interval = xfce_rc_read_int_entry(rc, "interval", 0);
 
                 list = g_list_prepend(list, loadhost);
 

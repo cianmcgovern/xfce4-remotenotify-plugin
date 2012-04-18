@@ -35,7 +35,9 @@
 #include "addhost.h"
 #include "displayhosts.h"
 #include "deletehost.h"
+#include "driver.h"
 
+GtkWidget *interval_field;
 GtkWidget *dialog;
 GtkToggleButton *cbnotify, *cbsound;
 RemoteNotifyPlugin *remote;
@@ -50,6 +52,7 @@ void save_config(GtkWidget *widget, gpointer user_data)
 {
     remote->displaynotifications = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cbnotify));
     remote->playsounds = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cbsound));
+    update_interval(atoi(gtk_entry_get_text(GTK_ENTRY(interval_field))));
     remotenotify_save(plug, remote);
     xfce_panel_plugin_unblock_menu(plug);
     gtk_widget_destroy(dialog);
@@ -79,6 +82,12 @@ void remotenotify_configure(XfcePanelPlugin *plugin, RemoteNotifyPlugin *remoten
     button = GTK_BUTTON( gtk_builder_get_object( builder, "save" ) );
     cbnotify = GTK_TOGGLE_BUTTON( gtk_builder_get_object( builder, "cbnotify" ) );
     cbsound = GTK_TOGGLE_BUTTON( gtk_builder_get_object( builder, "cbsound" ) );
+    interval_field = GTK_WIDGET( gtk_builder_get_object( builder, "interval" ) );
+    
+    char *currentinterval = (char*)malloc(sizeof(char*));
+    asprintf(&currentinterval, "%i", interval);
+    gtk_entry_set_text(GTK_ENTRY(interval_field), currentinterval);
+    free(currentinterval);
 
     gtk_builder_connect_signals( builder, NULL );
 

@@ -33,7 +33,6 @@ struct remote {
     char **commands;
     int num_commands;
     char **results;
-    int interval;
 };
 
 #endif

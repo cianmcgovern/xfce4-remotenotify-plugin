@@ -1,5 +1,5 @@
 /*
- * driver.h
+ * notify.h
  *
  * Copyright (C) 2012 Cian Mc Govern <cian@cianmcgovern.com>
  *
@@ -18,36 +18,13 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
-#ifndef REMOTE_NOTIFY_DRIVER_H_
-#define REMOTE_NOTIFY_DRIVER_H_
+#ifndef REMOTE_NOTIFY_NOTIFY_H_
+#define REMOTE_NOTIFY_NOTIFY_H_
 
-#include <stdbool.h>
-#include <glib.h>
-#include <gtk/gtk.h>
+#include <libnotify/notify.h>
 
-extern GList *list;
-
-extern int pause_exec;
-extern int interval;
-
-extern  pthread_mutex_t sshinit_lock;
-
-struct hostdetails
-{
-    char *hostname;
-    int port;
-    bool load;
-    bool memory;
-    bool cpu;
-    char *username;
-    char *password;
-    float threshload;
-    float threshmem;
-    float threshcpu;
-};
-
-void update_interval(int in);
-void update_pause();
-void *execute_threads(void *ptr);
+void display_load_notification(char *hostname, float load);
+void display_memory_notification(char *hostname, float usage);
+void display_cpu_notification(char *hostname, float usage);
 
 #endif

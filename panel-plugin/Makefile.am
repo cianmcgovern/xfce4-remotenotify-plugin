@@ -31,7 +31,9 @@ xfce4_remotenotify_plugin_SOURCES = \
 	deletehost.h \
 	deletehost.c \
 	configure.c \
-	configure.h
+	configure.h \
+	notification.c \
+	notification.h
 
 xfce4_remotenotify_plugin_CFLAGS = \
 	$(LIBXFCE4UTIL_CFLAGS) \
@@ -41,6 +43,7 @@ xfce4_remotenotify_plugin_CFLAGS = \
 	$(LIBSSH2_CFLAGS) \
 	$(LIBGCRYPT_CFLAGS) \
 	$(LIBGNUTLS_CFLAGS) \
+	$(LIBNOTIFY_CFLAGS) \
 	$(PLATFORM_CFLAGS)
 
 xfce4_remotenotify_plugin_LDADD = \
@@ -50,6 +53,7 @@ xfce4_remotenotify_plugin_LDADD = \
 	$(LIBSSH2_LIBS) \
 	$(LIBGCRYPT_LIBS) \
 	$(LIBGNUTLS_LIBS) \
+	$(LIBNOTIFY_LIBS) \
 	$(LIBPCRE_LIBS)
 
 #
