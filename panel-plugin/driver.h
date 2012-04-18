@@ -23,8 +23,11 @@
 
 #include <stdbool.h>
 #include <glib.h>
+#include <gtk/gtk.h>
 
 extern GList *list;
+
+int pause_exec;
 
 extern  pthread_mutex_t sshinit_lock;
 
@@ -42,5 +45,8 @@ struct hostdetails
     float threshcpu;
     int interval;
 };
+
+void update_pause();
+void *execute_threads(void *ptr);
 
 #endif

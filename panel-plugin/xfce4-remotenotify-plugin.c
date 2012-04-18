@@ -29,6 +29,7 @@
 #include <libxfce4panel/xfce-panel-plugin.h>
 #include <libxfce4panel/xfce-hvbox.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 #include "xfce4-remotenotify-plugin.h"
 #include "driver.h"
@@ -36,6 +37,7 @@
 
 XfceRc *rc;
 int hostcount = 0;
+GtkWidget *pause_item;
 
 static void remotenotify_construct(XfcePanelPlugin *plugin);
 
@@ -268,6 +270,18 @@ static gboolean remotenotify_size_changed (XfcePanelPlugin *plugin, gint size, R
     return TRUE;
 }
 
+static void call_pause()
+{
+    GtkWidget *pause_label = gtk_bin_get_child(GTK_BIN(pause_item));
+
+    if(pause_exec!=0)
+        gtk_label_set_text(GTK_LABEL(pause_label), "Resume");
+    else
+        gtk_label_set_text(GTK_LABEL(pause_label), "Pause");
+
+    update_pause();
+}
+
 static void remotenotify_construct (XfcePanelPlugin *plugin)
 {
     RemoteNotifyPlugin *remotenotify;
@@ -299,6 +313,17 @@ static void remotenotify_construct (XfcePanelPlugin *plugin)
     /* show the configure menu item and connect signal */
     xfce_panel_plugin_menu_show_configure (plugin);
     g_signal_connect (G_OBJECT (plugin), "configure-plugin", G_CALLBACK (remotenotify_configure), remotenotify);
+
+    pause_item = gtk_menu_item_new_with_label("Pause");
+    gtk_widget_show(pause_item);
+
+    xfce_panel_plugin_menu_insert_item(plugin, GTK_MENU_ITEM(pause_item));
+
+    g_signal_connect(G_OBJECT (pause_item), "activate", G_CALLBACK(call_pause), remotenotify);
+
+    pthread_t thread1;
+
+    pthread_create(&thread1, NULL, execute_threads, NULL);
 
     /* show the about menu item and connect signal */
     //xfce_panel_plugin_menu_show_about (plugin);
