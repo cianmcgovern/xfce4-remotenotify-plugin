@@ -27,7 +27,7 @@
 
 extern GList *list;
 
-int pause_exec;
+extern int pause_exec;
 
 extern  pthread_mutex_t sshinit_lock;
 

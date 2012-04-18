@@ -23,6 +23,8 @@
 #include <syslog.h>
 #include <gtk/gtk.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "driver.h"
 #include "remote.h"
@@ -30,7 +32,11 @@
 #include "parse.h"
 
 GList *list = NULL;
-pause_exec = 1;
+int pause_exec = 1;
+
+pthread_mutex_t sshinit_lock = PTHREAD_MUTEX_INITIALIZER;
+
+void callssh(struct remote *ptr);
 
 void update_pause()
 {

@@ -33,6 +33,7 @@
 #include <pthread.h>
 #include <gcrypt.h>
 #include <errno.h>
+#include <string.h>
 
 #include "remote.h"
 #include "ssh.h"
