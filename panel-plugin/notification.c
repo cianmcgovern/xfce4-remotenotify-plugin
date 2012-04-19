@@ -1,5 +1,5 @@
 /*
- * notify.c
+ * notification.c
  *
  * Copyright (C) 2012 Cian Mc Govern <cian@cianmcgovern.com>
  *
