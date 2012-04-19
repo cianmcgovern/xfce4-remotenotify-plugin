@@ -30,6 +30,8 @@
 #include <libxfce4panel/xfce-hvbox.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "xfce4-remotenotify-plugin.h"
 #include "driver.h"
@@ -108,7 +110,6 @@ void remotenotify_save (XfcePanelPlugin *plugin, RemoteNotifyPlugin *remotenotif
 
     /* open the config file, read/write */
     rc = xfce_rc_simple_open (file, FALSE);
-    g_free (file);
 
     if (G_LIKELY (rc != NULL))
     {   
@@ -125,7 +126,11 @@ void remotenotify_save (XfcePanelPlugin *plugin, RemoteNotifyPlugin *remotenotif
 
         /* close the rc file */
         xfce_rc_close (rc);
+
+        int configfile = open(file, O_RDWR);
+        fchmod(configfile, S_IRUSR | S_IWUSR);
     }   
+    g_free (file);
 }
 
 static void remotenotify_read (RemoteNotifyPlugin *remotenotify)
