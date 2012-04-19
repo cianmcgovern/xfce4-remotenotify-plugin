@@ -25,12 +25,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libxfce4util/libxfce4util.h>
+#include <libxfce4panel/xfce-panel-plugin.h>
 
 #include "driver.h"
 #include "remote.h"
 #include "ssh.h"
 #include "parse.h"
 #include "notification.h"
+#include "xfce4-remotenotify-plugin.h"
 
 GList *list = NULL;
 int pause_exec = 1;
@@ -92,13 +95,20 @@ void prepare_threads(gpointer data, gpointer user_data)
     strcpy(a.hostname, currenthost->hostname);
     a.port = currenthost->port;
     strcpy(a.username, currenthost->username);
-    strcpy(a.password, currenthost->password);
+
+    if(strlen(currenthost->privatekeyfile) > 0) {
+        asprintf(&(a.privatekey), "%s", currenthost->privatekeyfile);
+        asprintf(&(a.publickey), "%s", currenthost->publickeyfile);
+        strcpy(a.password, "");
+    }
+    else
+        strcpy(a.password, currenthost->password);
 
     callssh(&a);
 
     if(strlen(a.results[0]) > 0) {
         float load = strtof(a.results[0], NULL);
-        if(load >= currenthost->threshload)
+        if(load >= currenthost->threshload && displaynotifications)
             display_load_notification(a.hostname, load);
     }
 
@@ -117,7 +127,7 @@ void prepare_threads(gpointer data, gpointer user_data)
         float max = atof(seperator);
         
         float usedpercent = (used/max) * 100;
-        if(usedpercent > currenthost->threshmem)
+        if(usedpercent > currenthost->threshmem && displaynotifications)
             display_memory_notification(a.hostname, usedpercent);
 
         free(a.results[1]);
@@ -126,7 +136,7 @@ void prepare_threads(gpointer data, gpointer user_data)
     if(strlen(a.results[2]) > 0 ) {
 
         float used = 100 - atof(a.results[2]);
-        if(used > currenthost->threshcpu)
+        if(used > currenthost->threshcpu && displaynotifications)
             display_cpu_notification(a.hostname, used);
     }
     free(a.username);

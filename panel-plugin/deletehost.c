@@ -44,7 +44,8 @@ void find_matching_hostname(gpointer data, gpointer user_data)
 void delete_selected_host(GtkWidget *widget, gpointer user_data)
 {
     char *hostname = (char*) gtk_combo_box_get_active_text(GTK_COMBO_BOX(combo));
-    g_list_foreach(list, find_matching_hostname, hostname); 
+    if(hostname != NULL)
+        g_list_foreach(list, find_matching_hostname, hostname);
     gtk_widget_destroy(window);
     free(hostname);
 }

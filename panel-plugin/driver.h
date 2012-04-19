@@ -44,6 +44,8 @@ struct hostdetails
     float threshload;
     float threshmem;
     float threshcpu;
+    char *publickeyfile;
+    char *privatekeyfile;
 };
 
 void update_interval(int in);

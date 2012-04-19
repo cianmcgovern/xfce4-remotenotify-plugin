@@ -1,8 +1,8 @@
 [Xfce Panel]
 Type=X-XFCE-PanelPlugin
 Encoding=UTF-8
-_Name=Remote Notify Plugin
-_Comment=Remote Notify plugin for the Xfce panel
+_Name=Remote Notify
+_Comment=Monitor system health of remote machines
 Icon=xfce4-remotenotify-plugin
 X-XFCE-Exec=/usr/lib/xfce4/panel-plugins/xfce4-remotenotify-plugin
 X-XFCE-Unique=true

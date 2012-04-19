@@ -93,6 +93,6 @@ void display_current_hosts(GtkWidget *widget, gpointer user_data)
 
     treeviewcolumn = gtk_tree_view_column_new_with_attributes("CPU Usage Monitoring", cellrenderertext, "text", 4, NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), treeviewcolumn);
-
+    
     gtk_widget_show_all(window); 
 }

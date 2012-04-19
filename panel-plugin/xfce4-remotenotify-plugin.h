@@ -38,6 +38,7 @@ typedef struct
 } RemoteNotifyPlugin;
 
 int numberhosts;
+extern bool displaynotifications;
 
 void remotenotify_save (XfcePanelPlugin *plugin, RemoteNotifyPlugin *remotenotify);
 

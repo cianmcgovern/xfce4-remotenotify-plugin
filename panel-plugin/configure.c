@@ -50,7 +50,7 @@ void on_dialog1_close(GtkWidget *widget, gpointer user_data)
 
 void save_config(GtkWidget *widget, gpointer user_data)
 {
-    remote->displaynotifications = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cbnotify));
+    displaynotifications = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cbnotify));
     remote->playsounds = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cbsound));
     update_interval(atoi(gtk_entry_get_text(GTK_ENTRY(interval_field))));
     remotenotify_save(plug, remote);
@@ -96,7 +96,7 @@ void remotenotify_configure(XfcePanelPlugin *plugin, RemoteNotifyPlugin *remoten
 
     g_signal_connect( G_OBJECT(button), "clicked", G_CALLBACK(save_config), NULL);
 
-    gtk_toggle_button_set_active(cbnotify, remotenotify->displaynotifications);
+    gtk_toggle_button_set_active(cbnotify, displaynotifications);
     gtk_toggle_button_set_active(cbsound, remotenotify->playsounds);
 
     gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_CENTER);
