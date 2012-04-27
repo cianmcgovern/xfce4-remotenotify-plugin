@@ -100,8 +100,10 @@ void on_host_added(GtkWidget *widget, gpointer hostdetails)
     newhost->threshmem = atof(gtk_entry_get_text(GTK_ENTRY(currenthost.threshmem)));
     newhost->threshcpu = atof(gtk_entry_get_text(GTK_ENTRY(currenthost.threshcpu)));
 
-    asprintf(&(newhost->publickeyfile), "%s", parse_host(gtk_file_chooser_get_uri(currenthost.chooser2)));
-    asprintf(&(newhost->privatekeyfile), "%s", parse_host(gtk_file_chooser_get_uri(currenthost.chooser)));
+    if(strlen(newhost->password) < 1) {
+        asprintf(&(newhost->publickeyfile), "%s", parse_host(gtk_file_chooser_get_uri(currenthost.chooser2)));
+        asprintf(&(newhost->privatekeyfile), "%s", parse_host(gtk_file_chooser_get_uri(currenthost.chooser)));
+    }
 
     list = g_list_append(list, newhost);
     gtk_widget_destroy(currenthost.dialog);

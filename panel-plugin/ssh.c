@@ -80,7 +80,9 @@ int execute_command(struct remote *rm)
     gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread);
 
     openlog("remote-monitor-base",LOG_PID|LOG_CONS,LOG_USER);
+#ifdef DEBUG
     syslog(LOG_INFO,"Starting SSH execution on rm->hostname: %s with rm->username: %s and port: %d",rm->hostname,rm->username,rm->port);
+#endif
 
     size_t len;
     int type;
@@ -160,7 +162,8 @@ int execute_command(struct remote *rm)
 
         int check = libssh2_knownhost_checkp(nh,rm->hostname,rm->port,fingerprint,len
                 ,LIBSSH2_KNOWNHOST_TYPE_PLAIN|LIBSSH2_KNOWNHOST_KEYENC_RAW,&host);
-
+        
+        /* Host key checking is not implemented in UI yet
         if(check == LIBSSH2_KNOWNHOST_CHECK_MATCH)
             syslog(LOG_INFO,"Found matching host key for host %s",rm->hostname);
         else if(check == LIBSSH2_KNOWNHOST_CHECK_MISMATCH)
@@ -171,6 +174,7 @@ int execute_command(struct remote *rm)
             //TODO Have the ability to add the host key here
         else
             syslog(LOG_INFO,"There was a failure while attempting to match host keys for host %s",rm->hostname);
+        */
     }
     else {
         syslog(LOG_INFO,"Couldn't get host key for host: %s",rm->hostname);
@@ -182,7 +186,9 @@ int execute_command(struct remote *rm)
     /* Authenticate with the specified rm->username and passwod and check for success */
     // TODO Add ability to authenticate with a private key
     if( (strlen(rm->password)) != 0 ) {
+#ifdef DEBUG
         syslog(LOG_INFO,"Using rm->password authentication for host %s",rm->hostname);
+#endif
         while( (rc = libssh2_userauth_password(session,rm->username,rm->password)) == LIBSSH2_ERROR_EAGAIN);
         if(rc) {
             syslog(LOG_INFO,"Authentication to host %s failed",rm->hostname);
@@ -190,7 +196,9 @@ int execute_command(struct remote *rm)
         }
     }
     else if( ( (strlen(rm->publickey)) != 0 ) && ( ( strlen(rm->privatekey)) != 0) ) {
+#ifdef DEBUG
         syslog(LOG_INFO,"Using public key authentication for host %s",rm->hostname);
+#endif
         while( (rc = libssh2_userauth_publickey_fromfile(session,rm->username,rm->publickey,rm->privatekey,NULL)) == LIBSSH2_ERROR_EAGAIN);
 
         switch(rc) {
@@ -247,7 +255,9 @@ int execute_command(struct remote *rm)
                     bytecount += rc;
                     char *output;
                     output = buffer;
+#ifdef DEBUG
                     syslog(LOG_INFO,"Got output from command %s on host %s:%s",rm->commands[i],rm->hostname,output);
+#endif
                     /* Store the output in the results array */
                     asprintf(&(rm->results[i]),"%s",output);
                     memset(buffer,0,2048);
@@ -273,7 +283,9 @@ int execute_command(struct remote *rm)
 
 shutdown:
 
+#ifdef DEBUG
     syslog(LOG_INFO,"Disconnecting SSH session for host %s",rm->hostname);
+#endif
 
     libssh2_session_disconnect(session,"Normal SSH disconnection");
     libssh2_session_free(session);

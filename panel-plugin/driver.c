@@ -158,23 +158,29 @@ void callssh(struct remote *ptr)
 
     if( strlen(rm->results[0]) > 0 ) {
         parse_uptime(rm->results[0]);
+#ifdef DEBUG
         syslog(LOG_INFO, "Got load for %s: %s\n",rm->hostname,rm->results[0]);
+#endif
     }
 
     if( strlen(rm->results[1]) > 0 ) {
         parse_memory(rm->results[1]);
+#ifdef DEBUG
         syslog(LOG_INFO, "Got memory for %s: %s\n", rm->hostname,rm->results[1]);
+#endif
     }
     if( strlen(rm->results[2]) > 0 ) {
         parse_mpstat(rm->results[2]);
+#ifdef DEBUG
         syslog(LOG_INFO, "Got CPU load for %s: %s\n", rm->hostname,rm->results[2]);
+#endif
     }
 }
 
 void *execute_threads(void *ptr)
 {
     for(;;) {
-        if(pause_exec!=0 && interval!=0) {
+        if(pause_exec!=0 && interval > 1) {
             g_list_foreach(list, prepare_threads, NULL);
             sleep(interval);
         }
