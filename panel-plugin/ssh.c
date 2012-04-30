@@ -195,7 +195,7 @@ int execute_command(struct remote *rm)
             goto error;
         }
     }
-    else if( ( (strlen(rm->publickey)) != 0 ) && ( ( strlen(rm->privatekey)) != 0) ) {
+    else if( ( (strlen(rm->publickey)) > 5 ) && ( ( strlen(rm->privatekey)) > 5) ) {
 #ifdef DEBUG
         syslog(LOG_INFO,"Using public key authentication for host %s",rm->hostname);
 #endif
